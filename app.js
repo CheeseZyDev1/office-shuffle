@@ -216,6 +216,147 @@ async function copySchedule() {
   }
 }
 
+function roundedRect(ctx, x, y, width, height, radius) {
+  const r = Math.min(radius, width / 2, height / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + width, y, x + width, y + height, r);
+  ctx.arcTo(x + width, y + height, x, y + height, r);
+  ctx.arcTo(x, y + height, x, y, r);
+  ctx.arcTo(x, y, x + width, y, r);
+  ctx.closePath();
+}
+
+async function saveScheduleImage() {
+  const button = document.querySelector("#saveImageButton");
+  button.disabled = true;
+  try {
+    await document.fonts?.ready;
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const width = 1600;
+    const margin = 100;
+    const nameWidth = 390;
+    const dayWidth = (width - margin * 2 - nameWidth) / 5;
+    const headerY = 310;
+    const headHeight = 125;
+    const rowHeight = 82;
+    const footerHeight = 70;
+    const tableHeight = headHeight + rowHeight * 9 + footerHeight;
+    canvas.width = width;
+    canvas.height = headerY + tableHeight + 100;
+
+    ctx.fillStyle = "#f4f0e7";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "#18251f";
+    ctx.font = '800 28px Manrope, "IBM Plex Sans Thai", sans-serif';
+    ctx.fillText("OFFICE SHUFFLE", margin, 82);
+    ctx.fillStyle = "#0e7769";
+    ctx.font = '700 22px Manrope, "IBM Plex Sans Thai", sans-serif';
+    ctx.fillText("TEAM ROTATION · 2 WEEKS", margin, 135);
+    ctx.fillStyle = "#18251f";
+    ctx.font = '700 68px "IBM Plex Sans Thai", sans-serif';
+    ctx.fillText("ตารางเข้าออฟฟิศ", margin, 220);
+
+    const start = nextMonday(parseLocalDate(drawDate.value));
+    const end = addDays(start, 13);
+    ctx.fillStyle = "#69716c";
+    ctx.font = '500 26px "IBM Plex Sans Thai", sans-serif';
+    ctx.fillText(`${formatLong(start)} — ${formatLong(end)}`, margin, 268);
+
+    roundedRect(ctx, margin, headerY, width - margin * 2, tableHeight, 24);
+    ctx.fillStyle = "#fffdf8";
+    ctx.fill();
+    ctx.save();
+    roundedRect(ctx, margin, headerY, width - margin * 2, tableHeight, 24);
+    ctx.clip();
+
+    ctx.fillStyle = "#18251f";
+    ctx.fillRect(margin, headerY, width - margin * 2, headHeight);
+    const dayNames = ["จ.", "อ.", "พ.", "พฤ.", "ศ."];
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#ffffff";
+    ctx.font = '700 26px "IBM Plex Sans Thai", sans-serif';
+    ctx.fillText("สมาชิก", margin + 34, headerY + 70);
+    dayNames.forEach((day, index) => {
+      const center = margin + nameWidth + dayWidth * index + dayWidth / 2;
+      ctx.textAlign = "center";
+      ctx.font = '700 27px "IBM Plex Sans Thai", sans-serif';
+      ctx.fillText(day, center, headerY + 42);
+      ctx.fillStyle = "#b9c3bd";
+      ctx.font = '500 17px "IBM Plex Sans Thai", sans-serif';
+      ctx.fillText(`${formatShort(addDays(start, index))} · ${formatShort(addDays(start, index + 7))}`, center, headerY + 78);
+      ctx.fillStyle = "#ffffff";
+    });
+
+    state.order.forEach((name, rowIndex) => {
+      const y = headerY + headHeight + rowHeight * rowIndex;
+      if (rowIndex % 2 === 1) {
+        ctx.fillStyle = "#faf9f4";
+        ctx.fillRect(margin, y, width - margin * 2, rowHeight);
+      }
+      ctx.strokeStyle = "#deded4";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(margin, y);
+      ctx.lineTo(width - margin, y);
+      ctx.stroke();
+
+      ctx.textAlign = "left";
+      ctx.fillStyle = "#8b938e";
+      ctx.font = '700 17px Manrope, sans-serif';
+      ctx.fillText(String(rowIndex + 1).padStart(2, "0"), margin + 30, y + 51);
+      ctx.fillStyle = "#18251f";
+      ctx.font = '600 27px "IBM Plex Sans Thai", sans-serif';
+      ctx.fillText(name, margin + 92, y + 52);
+
+      PATTERNS[rowIndex].forEach((active, dayIndex) => {
+        if (!active) return;
+        const barWidth = dayWidth * .58;
+        const x = margin + nameWidth + dayWidth * dayIndex + (dayWidth - barWidth) / 2;
+        roundedRect(ctx, x, y + 35, barWidth, 13, 7);
+        ctx.fillStyle = COLORS[rowIndex];
+        ctx.fill();
+      });
+    });
+
+    const totalY = headerY + headHeight + rowHeight * 9;
+    ctx.fillStyle = "#eeeee7";
+    ctx.fillRect(margin, totalY, width - margin * 2, footerHeight);
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#69716c";
+    ctx.font = '600 21px "IBM Plex Sans Thai", sans-serif';
+    ctx.fillText("รวมคน", margin + 34, totalY + 44);
+    [6, 5, 6, 5, 5].forEach((total, index) => {
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#18251f";
+      ctx.font = '700 22px Manrope, sans-serif';
+      ctx.fillText(total, margin + nameWidth + dayWidth * index + dayWidth / 2, totalY + 44);
+    });
+    ctx.restore();
+
+    ctx.fillStyle = "#69716c";
+    ctx.textAlign = "right";
+    ctx.font = '500 18px "IBM Plex Sans Thai", sans-serif';
+    ctx.fillText("สร้างโดย Office Shuffle", width - margin, canvas.height - 40);
+
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+    if (!blob) throw new Error("สร้างไฟล์รูปไม่สำเร็จ");
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `office-schedule-${localISO(start)}.png`;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    showToast("บันทึกรูปตารางแล้ว");
+  } catch (_) {
+    showToast("ไม่สามารถบันทึกรูปได้ กรุณาลองใหม่");
+  } finally {
+    button.disabled = false;
+  }
+}
+
 let toastTimer;
 function showToast(message) {
   toast.textContent = message;
@@ -235,6 +376,7 @@ drawDate.addEventListener("change", () => {
 });
 document.querySelector("#shuffleButton").addEventListener("click", shuffle);
 document.querySelector("#copyButton").addEventListener("click", copySchedule);
+document.querySelector("#saveImageButton").addEventListener("click", saveScheduleImage);
 document.querySelector("#editButton").addEventListener("click", () => {
   buildNameInputs();
   dialog.showModal();

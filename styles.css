@@ -63,6 +63,7 @@ h1 em { font-style: normal; color: var(--teal); }
 .live-dot { display: inline-block; width: 8px; height: 8px; background: var(--acid); border: 2px solid var(--teal); box-shadow: 0 0 0 3px rgba(14,119,105,.12); border-radius: 50%; margin-right: 9px; }
 .text-button { display: flex; gap: 6px; align-items: center; color: var(--muted); font-size: 13px; }
 .text-button:hover { color: var(--teal); }
+.card-tools { display: flex; align-items: center; gap: 16px; }
 .table-scroll { overflow-x: auto; }
 table { width: 100%; min-width: 700px; border-collapse: collapse; table-layout: fixed; }
 th, td { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); text-align: center; }
@@ -146,6 +147,8 @@ dialog form { padding: 27px; }
   table { min-width: 620px; }
   .period-card strong { font-size: 16px; }
   .drag-hint { display: block; margin: 1px 0 0 21px; }
+  .card-tools { gap: 9px; }
+  .card-tools .text-button { font-size: 11px; }
   .person-head, .person-cell { position: sticky; left: 0; z-index: 2; background: var(--card); box-shadow: 8px 0 14px rgba(24,37,31,.04); }
   .person-head { z-index: 3; background: #f7f5ef; }
   tfoot td:first-child { position: sticky; left: 0; z-index: 2; background: #f1f0e9; }

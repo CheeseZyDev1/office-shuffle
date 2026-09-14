@@ -46,7 +46,6 @@ button { color: inherit; }
 .eyebrow { margin: 0 0 11px; font: 700 11px Manrope, sans-serif; letter-spacing: .18em; text-transform: uppercase; color: var(--teal); }
 h1 { font-size: clamp(48px, 7vw, 94px); line-height: .88; letter-spacing: -.065em; margin: 0; font-weight: 700; }
 h1 em { font-style: normal; color: var(--teal); }
-.intro { margin: 0 0 7px; font-size: 16px; line-height: 1.7; color: var(--muted); }
 
 .period-card { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 15px; background: var(--ink); color: white; border-radius: 18px 18px 0 0; padding: 17px 20px; }
 .period-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 12px; background: var(--acid); color: var(--ink); }
@@ -129,7 +128,6 @@ dialog form { padding: 27px; }
   .shell { width: min(100% - 24px, 580px); padding-top: 18px; }
   .hero { display: block; padding: 40px 2px 25px; }
   h1 { font-size: clamp(43px, 13vw, 56px); letter-spacing: -.07em; }
-  .intro { margin-top: 22px; font-size: 14px; }
   .period-card { grid-template-columns: auto 1fr; }
   .date-control { grid-column: 1 / -1; justify-content: space-between; border-top: 1px solid #3b4842; padding-top: 12px; }
   .date-control input { width: 160px; min-width: 0; }

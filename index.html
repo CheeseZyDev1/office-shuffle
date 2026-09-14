@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f1e8">
+  <title>Office Shuffle — ตารางเข้าออฟฟิศ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Office Shuffle">
+        <span class="brand-mark"><i></i><i></i><i></i></span>
+        <span>OFFICE<br>SHUFFLE</span>
+      </a>
+      <button class="icon-button" id="editButton" type="button" aria-label="แก้ไขรายชื่อ">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4Zm10-13 4 4"/></svg>
+        <span>แก้ไขรายชื่อ</span>
+      </button>
+    </header>
+
+    <section class="hero">
+      <div>
+        <p class="eyebrow">TEAM ROTATION · 2 WEEKS</p>
+        <h1>ใครเข้าออฟฟิศ<br><em>วันไหน?</em></h1>
+      </div>
+      <p class="intro">สุ่มคนใหม่ในตารางเดิมอย่างยุติธรรม<br>หนึ่งผล ใช้งานต่อเนื่องสองสัปดาห์</p>
+    </section>
+
+    <section class="period-card" aria-labelledby="periodTitle">
+      <div class="period-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M6 2v4M18 2v4M3 9h18M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2Z"/></svg>
+      </div>
+      <div>
+        <span id="periodTitle">รอบการทำงานถัดไป</span>
+        <strong id="periodText">กำลังคำนวณ...</strong>
+      </div>
+      <label class="date-control">
+        <span>วันที่สุ่ม</span>
+        <input id="drawDate" type="date">
+      </label>
+    </section>
+
+    <section class="roster-card">
+      <div class="card-heading">
+        <div>
+          <span class="live-dot"></span>
+          <span>ตารางรอบนี้</span>
+          <small class="drag-hint">ลากชื่อเพื่อสลับตำแหน่ง</small>
+        </div>
+        <button class="text-button" id="copyButton" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 8h11v11H8zM5 16H4V5h11v1"/></svg>
+          คัดลอก
+        </button>
+      </div>
+
+      <div class="table-scroll">
+        <table id="rosterTable">
+          <thead>
+            <tr>
+              <th class="person-head">สมาชิก</th>
+              <th><span>จ.</span><small data-day="0"></small></th>
+              <th><span>อ.</span><small data-day="1"></small></th>
+              <th><span>พ.</span><small data-day="2"></small></th>
+              <th><span>พฤ.</span><small data-day="3"></small></th>
+              <th><span>ศ.</span><small data-day="4"></small></th>
+            </tr>
+          </thead>
+          <tbody id="rosterBody"></tbody>
+          <tfoot>
+            <tr>
+              <td>รวมคน</td>
+              <td>6</td><td>5</td><td>6</td><td>5</td><td>5</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <p class="date-hint"><span></span> วันที่บรรทัดบนคือสัปดาห์ที่ 1 · บรรทัดล่างคือสัปดาห์ที่ 2</p>
+    </section>
+
+    <section class="action-row">
+      <button class="shuffle-button" id="shuffleButton" type="button">
+        <span class="shuffle-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 3h5v5M4 17l5-5 3 3 9-9M16 21h5v-5M14.5 16.5 21 21M4 7l3 3"/></svg>
+        </span>
+        <span><small>พร้อมแล้ว</small><strong>สุ่มตารางใหม่</strong></span>
+        <span class="arrow">↗</span>
+      </button>
+      <div class="status-note">
+        <span>บันทึกอัตโนมัติ</span>
+        <small>ผลล่าสุดจะอยู่ แม้ปิดหน้าเว็บ</small>
+      </div>
+    </section>
+
+    <footer>
+      <span>FIXED PATTERN</span>
+      <span class="footer-line"></span>
+      <span>FAIR ROTATION</span>
+      <span class="footer-line"></span>
+      <span>9 MEMBERS</span>
+    </footer>
+  </main>
+
+  <dialog id="nameDialog">
+    <form method="dialog" id="nameForm">
+      <div class="dialog-heading">
+        <div>
+          <p class="eyebrow">TEAM MEMBERS</p>
+          <h2>แก้ไขรายชื่อ</h2>
+          <p>ใส่ชื่อให้ครบ 9 คน แล้วกดบันทึก</p>
+        </div>
+        <button class="close-button" value="cancel" aria-label="ปิด" type="submit">×</button>
+      </div>
+      <div class="name-grid" id="nameInputs"></div>
+      <div class="dialog-actions">
+        <button value="cancel" class="secondary-button" type="submit">ยกเลิก</button>
+        <button value="save" class="primary-button" id="saveNames" type="submit">บันทึกรายชื่อ</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
